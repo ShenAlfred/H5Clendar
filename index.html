@@ -299,31 +299,33 @@
 				}
 				//当第二次选中的时间比第一次选中的时间早
 				if( new Date($(this).attr('data-date')).getTime() < new Date(date).getTime()){
-				    console.log(1111)
 					start_dom.removeClass('selected-start');
 					start_dom = $(this);
                     date = $(this).attr('data-date');
-					$(this).addClass('selected-start');
+                    startOrEnd(this, date, end_date, 'start');
 				}
 				else if(new Date($(this).attr('data-date')).getTime() > new Date(date).getTime()) {
 					end_date = $(this).attr('data-date');
-                    var region_arr = regionDate(date, end_date);
-                    $("div[data-date].region").removeClass('region');
-                    $("div[data-date].selected-end").removeClass('selected-end');
-                    $.each(region_arr, function(i, time) {
-                        if(i == 0 || i == region_arr.length-1) return;
-                        else {
-                            if($("div[data-date="+ time +"]").hasClass('selected-end')) {
-                                $("div[data-date="+ time +"]").removeClass('selected-end');
-							}
-                            $("div[data-date="+ time +"]").addClass('region');
-						}
-					});
-					$(this).addClass('selected-end');
+                    startOrEnd(this, date, end_date, 'end');
 				}
 			});
-
 		});
+
+		function startOrEnd(context, startDate, endDate, startOrEn) {
+            var region_arr = regionDate(startDate, endDate);
+            $("div[data-date].region").removeClass('region');
+            $("div[data-date].selected-"+startOrEn).removeClass('selected-'+startOrEn);
+            $.each(region_arr, function(i, time) {
+                if(i == 0 || i == region_arr.length-1) {}
+                else {
+                    if($("div[data-date="+ time +"]").hasClass('selected-'+startOrEn)) {
+                        $("div[data-date="+ time +"]").removeClass('selected-'+startOrEn);
+                    }
+                    $("div[data-date="+ time +"]").addClass('region');
+                }
+            });
+            $(context).addClass('selected-'+startOrEn);
+		}
 
 		function regionDate(startDate, endDate) {
 		    var startTime = getNewDate(startDate),
