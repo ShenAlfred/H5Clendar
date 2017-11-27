@@ -312,19 +312,22 @@
 		});
 
 		function startOrEnd(context, startDate, endDate, startOrEn) {
-            var region_arr = regionDate(startDate, endDate);
-            $("div[data-date].region").removeClass('region');
-            $("div[data-date].selected-"+startOrEn).removeClass('selected-'+startOrEn);
-            $.each(region_arr, function(i, time) {
-                if(i == 0 || i == region_arr.length-1) {}
-                else {
-                    if($("div[data-date="+ time +"]").hasClass('selected-'+startOrEn)) {
-                        $("div[data-date="+ time +"]").removeClass('selected-'+startOrEn);
-                    }
-                    $("div[data-date="+ time +"]").addClass('region');
-                }
-            });
-            $(context).addClass('selected-'+startOrEn);
+			if(endDate) {
+				var region_arr = regionDate(startDate, endDate);
+	            $("div[data-date].region").removeClass('region');
+	            $("div[data-date].selected-"+startOrEn).removeClass('selected-'+startOrEn);
+	            $.each(region_arr, function(i, time) {
+	                if(i == 0 || i == region_arr.length-1) {}
+	                else {
+	                    if($("div[data-date="+ time +"]").hasClass('selected-'+startOrEn)) {
+	                        $("div[data-date="+ time +"]").removeClass('selected-'+startOrEn);
+	                    }
+	                    $("div[data-date="+ time +"]").addClass('region');
+	                }
+	            });
+			}
+			$(context).addClass('selected-'+startOrEn);
+            
 		}
 
 		function regionDate(startDate, endDate) {
