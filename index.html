@@ -198,7 +198,7 @@
 				date_number[1] = 28;
 			}
 			var total_day = date_number[(firstDate.getMonth())>11?(Math.ceil(firstDate.getMonth())%12):firstDate.getMonth()];
-			var prevday_total = date_number[(firstDate.getMonth())>11?(Math.ceil(firstDate.getMonth())%12):(firstDate.getMonth()-1)];//上个月的总天数
+			var prevday_total = date_number[(firstDate.getMonth())>11?(Math.ceil(firstDate.getMonth())%12):(firstDate.getMonth()-1) < 0 ? 11 : (firstDate.getMonth()-1)];//上个月的总天数
 			var prevStartDay = prevday_total - what_day;
 
 			//测试打印
@@ -234,7 +234,7 @@
 					}
 				}
 				//第一天在周一和周六的范围内需要遍历上一个月剩余的天数
-				else if( (newDate.getDay() >=1||newDate.getDay() <=6) &&( Math.floor( ((current_date+current_data.getDay()))/7) == 0 ) ) {   
+				else if( (newDate.getDay() >=1||newDate.getDay() <=6) &&( Math.floor( ((current_date+current_data.getDay()))/7) == 0 ) ) {  
 				// console.log(prevStartDay)                                              
 					for(var prev=prevStartDay+1; prev<=prevday_total; prev++) {
 						html+="<div class='noclick'><span>"+ prev +"</span></div>";
