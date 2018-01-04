@@ -173,6 +173,7 @@
 	<script type="text/javascript">
 
 		var renderNumber = 5;
+		var prevPlaceholder = [];
 
 		function isLeapYear(year) {
 			return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
@@ -200,17 +201,8 @@
 			var total_day = date_number[(firstDate.getMonth())>11?(Math.ceil(firstDate.getMonth())%12):firstDate.getMonth()];
 			var prevday_total = date_number[(firstDate.getMonth())>11?(Math.ceil(firstDate.getMonth())%12):(firstDate.getMonth()-1) < 0 ? 11 : (firstDate.getMonth()-1)];//上个月的总天数
 			var prevStartDay = prevday_total - what_day;
+			prevPlaceholder[k] = newDate.getDay();
 
-			//测试打印
-			//console.log(newDate.getFullYear()+"年"+(newDate.getMonth()+1)+"月"+" 一共有"+total_day+"天");
-			// if(isLeapYear(newDate.getFullYear())) {
-			// 	console.log(newDate.getFullYear()+"年是闰年");
-			// }else {
-			// 	console.log(newDate.getFullYear()+"年不是闰年");
-			// }
-			// for(var y=1900; y<2051; y++) {
-			// 	console.log(y+"年: " + lunarLeapMonthOfYear(y));
-			// }
 
 			var $date = document.createElement('div');
 				$date.className = "date";
@@ -220,35 +212,50 @@
 				$cells.id = "calendar_cells"+k;
 			if(k==0) { //第一个从当天开始算
 
-				//console.log(Math.floor((current_date+current_data.getDay())/7))
-				//console.log( (newDate.getDay() >=1||newDate.getDay() <=6) );
-				//console.log( Math.floor( ((current_date+current_data.getDay())-current_data.getDay())/7) == 0 );
+				if(newDate.getDay() == 0 && Math.floor((current_date+prevPlaceholder[k])%7) == 0){	//当前月份的第一天是星期日的话直接从第一天开始渲染
+					for(var cur=1; cur<=total_day; cur++) {
+						if(cur == current_date) {
+							html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ "今天" +"</span><span>"+ 390 +"元</span></div>";
+						}else {
+							html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ cur +"</span><span>"+ 390 +"元</span></div>";
+						}
+					}
+				}
+				else if((newDate.getDay() >=1||newDate.getDay() <=6)) {
 
-				if(newDate.getDay() == 0 && Math.floor((current_date+current_data.getDay())/7) == 0){	//当前月份的第一天是星期日的话直接从第一天开始渲染
-					for(var cur=1; cur<=total_day; cur++) {
-						if(cur == current_date) {
-							html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ "今天" +"</span><span>"+ 390 +"元</span></div>";
-						}else {
-							html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ cur +"</span><span>"+ 390 +"元</span></div>";
-						}
-					}
-				}
-				//第一天在周一和周六的范围内需要遍历上一个月剩余的天数
-				else if( (newDate.getDay() >=1||newDate.getDay() <=6) &&( Math.floor( ((current_date+current_data.getDay()))/7) == 0 ) ) {  
-				// console.log(prevStartDay)                                              
-					for(var prev=prevStartDay+1; prev<=prevday_total; prev++) {
+					if(Math.floor((current_date+prevPlaceholder[k])/8) <=0) {
+						for(var prev=prevStartDay+1; prev<=prevday_total; prev++) {
 						html+="<div class='noclick'><span>"+ prev +"</span></div>";
-					}
-					for(var cur=1; cur<=total_day; cur++) {
-						if(cur == current_date) {
-							html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ "今天" +"</span><span>"+ 390 +"元</span></div>";
-						}else {
-							html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ cur +"</span><span>"+ 390 +"元</span></div>";
+						}
+						for(var cur=1; cur<=total_day; cur++) {
+							if(cur < current_date) {
+								html+="<div class='noclick'><span>"+ cur +"</span></div>";
+							}
+							else if(cur == current_date) {
+								html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ "今天" +"</span><span>"+ 390 +"元</span></div>";
+							}else {
+								html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ cur +"</span><span>"+ 390 +"元</span></div>";
+							}
 						}
 					}
+					else if(Math.floor((current_date+prevPlaceholder[k])/8) > 0) {
+						newDate = new Date(current_year, current_month, current_date);
+						what_day = newDate.getDay();
+						prevStartDay = current_date - what_day;
+						for(var prev=prevStartDay; prev<current_date; prev++) {
+							html+="<div class='noclick'><span>"+ prev +"</span></div>";
+						}
+						for(var cur=current_date; cur<=total_day; cur++) {
+							if(cur == current_date) {
+								html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ "今天" +"</span><span>"+ 390 +"元</span></div>";
+							}else {
+								html+="<div data-date="+ newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+cur +"><span>"+ cur +"</span><span>"+ 390 +"元</span></div>";
+							}
+						}
+					}
+					
 				}
-				//判断当天如果不在第一行直接从当天开始渲染前面的天数忽略（不包括该行当天前的天数）
-				else if( Math.floor((current_date+current_data.getDay())/7) > 0 ) {
+				else {
 					newDate = new Date(current_year, current_month, current_date);
 					what_day = newDate.getDay();
 					prevStartDay = current_date - what_day;
